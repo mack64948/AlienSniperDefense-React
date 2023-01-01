@@ -1,0 +1,18 @@
+.game-board{
+    position: relative;
+    width: 500px;
+    height: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 100px;
+    border: thin solid black;
+    background-color: orange;
+}
+
+.crosshair{
+    width: 100px;
+    height: 100px;
+    border: thin solid black;
+    background-color: green;
+    border-radius: 50%;
+}
