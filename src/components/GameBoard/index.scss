@@ -6,13 +6,38 @@
     margin-right: auto;
     margin-top: 100px;
     border: thin solid black;
-    background-color: orange;
+
+    background-image: url("../../assets/space-background.jpeg");
+    background-size: cover;
+    background-repeat: no-repeat;
+
+    .scoreboard{
+        color:  yellow;
+    }
 }
 
-.crosshair{
-    width: 100px;
-    height: 100px;
-    border: thin solid black;
-    background-color: green;
-    border-radius: 50%;
+#the-crosshair{
+    background-image: url("../../assets/crosshair_blue_large.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    width: 70px;
+    height: 70px;
+
+   
 }
+
+
+
+.alien1{
+   
+    width: 70px;
+    height: 70px;
+
+    img{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+}
+
