@@ -1,6 +1,8 @@
 import {useState,useRef,useEffect} from "react"
 import "./index.scss"
-import { Alien } from "../Alien";
+// import { Alien } from "../Alien";
+import { SelfUpdatingAlien } from "../SelfUpdatingAlien";
+import { AlienEnemy } from "../../classes/AlienEnemy";
 
 import { alienImages } from "../../data";
 import { checkForCollision, runExplosionAnimation } from "../../utils/helper_functions";
@@ -13,9 +15,9 @@ import { checkForCollision, runExplosionAnimation } from "../../utils/helper_fun
 function GameBoard({props}){
     const crosshairDiv = useRef();
     const gameBoard = useRef();
-    const alien1 = useRef();
-    const enemies = useRef();
-    let alien1_config = useRef();
+    // let alien1 = useRef();
+    // const enemies = useRef();
+    // let alien1_config = useRef();
 
     const [position,setPosition] = useState({x: 0, y: 0})
     const [hits,setHits] = useState(0);
@@ -40,39 +42,41 @@ function GameBoard({props}){
         Main Game Loop
     */
     useEffect(() => {
-
-        alien1_config = {
-            x: 100, y: 100,
-            dx: 10, dy: -10,
-            health: 10
-        };
-
-        let alien1_rect = alien1.current.getBoundingClientRect();
         let boardRect = gameBoard.current.getBoundingClientRect()
+        let xMax = boardRect.width;
+        let yMax = boardRect.height;
+     
+
+        // alien1 = new AlienEnemy(alienImages["pink"], 100,100,5,5,xMax,yMax);
+        // console.log(alien1);
+        // alien1_config = {
+        //     x: 100, y: 100,
+        //     dx: 10, dy: -10,
+        //     health: 10
+        // };
+
+        // let alien1_rect = alien1.current.getBoundingClientRect();
         let crosshairRect = crosshairDiv.current.getBoundingClientRect()
 
-        let xMax = boardRect.width;
-        let xMin = 0;
-
-        let yMax = boardRect.height;
-        let yMin = 0;
+        
 
         let intervalID = setInterval(() => {
 
-            alien1_config.x += alien1_config.dx;
-            alien1_config.y += alien1_config.dy;
+            // alien1.updatePosition();
+            // alien1_config.x += alien1_config.dx;
+            // alien1_config.y += alien1_config.dy;
 
-            if(alien1_config.x + alien1_rect.width >= xMax || alien1_config.x <= 0){
-                alien1_config.dx = -alien1_config.dx;
-            }
+            // if(alien1_config.x + alien1_rect.width >= xMax || alien1_config.x <= 0){
+            //     alien1_config.dx = -alien1_config.dx;
+            // }
 
-            if(alien1_config.y + alien1_rect.height >= yMax || alien1_config.y <= 0){
-                alien1_config.dy = -alien1_config.dy;
-            }
+            // if(alien1_config.y + alien1_rect.height >= yMax || alien1_config.y <= 0){
+            //     alien1_config.dy = -alien1_config.dy;
+            // }
 
         
-            alien1.current.style.left = (alien1_config.x) + "px";
-            alien1.current.style.top = (alien1_config.y) + "px";
+            // alien1.current.style.left = (alien1_config.x) + "px";
+            // alien1.current.style.top = (alien1_config.y) + "px";
            
         }, 100);
 
@@ -106,27 +110,35 @@ function GameBoard({props}){
     }
 
 
+    let aliens = [
+        <SelfUpdatingAlien config={{x:200,y:100,dy:-5,dx:10}} gameScreenWidth={400} gameScreenHeight={400} imgSrc={alienImages["pink"]}></SelfUpdatingAlien>,
+        <SelfUpdatingAlien config={{x:100,y:100,dy:10,dx:10}} gameScreenWidth={400} gameScreenHeight={400} imgSrc={alienImages["pink"]}></SelfUpdatingAlien>,
+        <SelfUpdatingAlien config={{x:100,y:100,dy:10,dx:-6}} gameScreenWidth={400} gameScreenHeight={400} imgSrc={alienImages["pink"]}></SelfUpdatingAlien>,
+
+
+    ]
     return (<div ref={gameBoard} className="game-board" onMouseMove={updateCrosshairPosition}>
 
         <h1 className="scoreboard">{hits}</h1>
-        <div className="alien1" style={{position: "absolute"}} ref={alien1}>
-            <img src={alienImages["pink"]}/>
-        </div>
+        {
+            
+                aliens
+        }
 
         <div onClick={() => {
              playSound();
 
-             let alien1_rect = alien1.current.getBoundingClientRect();
-             let crosshairRect = crosshairDiv.current.getBoundingClientRect()
+            //  let alien1_rect = alien1.current.getBoundingClientRect();
+            //  let crosshairRect = crosshairDiv.current.getBoundingClientRect()
      
-             checkForCollision(crosshairRect,alien1_rect,() => {
-                setHits(hits+1);       
+            //  checkForCollision(crosshairRect,alien1_rect,() => {
+            //     setHits(hits+1);       
                     
-                let alienImg = alien1.current.querySelector("img");
-                console.log(alienImg);
+            //     let alienImg = alien1.current.querySelector("img");
+            //     console.log(alienImg);
 
-               runExplosionAnimation(alienImg,alienImages["pink"]);
-             });
+            //    runExplosionAnimation(alienImg,alienImages["pink"]);
+            //  });
         
 
         }} id="the-crosshair" style={{position: "absolute"}} ref={crosshairDiv}></div>
