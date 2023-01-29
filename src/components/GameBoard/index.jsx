@@ -2,6 +2,7 @@ import {useState,useRef,useEffect} from "react"
 import "./index.scss"
 // import { Alien } from "../Alien";
 import { SelfUpdatingAlien } from "../SelfUpdatingAlien";
+import { SelfUpdatingAlienWithRef } from "../SelfUpdatingAlien";
 import { AlienEnemy } from "../../classes/AlienEnemy";
 
 import { alienImages } from "../../data";
@@ -115,18 +116,36 @@ function GameBoard({props}){
         <SelfUpdatingAlien config={{x:100,y:100,dy:10,dx:10}} gameScreenWidth={400} gameScreenHeight={400} imgSrc={alienImages["pink"]}></SelfUpdatingAlien>,
         <SelfUpdatingAlien config={{x:100,y:100,dy:10,dx:-6}} gameScreenWidth={400} gameScreenHeight={400} imgSrc={alienImages["pink"]}></SelfUpdatingAlien>,
 
-
     ]
+   
     return (<div ref={gameBoard} className="game-board" onMouseMove={updateCrosshairPosition}>
 
         <h1 className="scoreboard">{hits}</h1>
-        {
-            
-                aliens
-        }
+
+        {aliens}
 
         <div onClick={() => {
              playSound();
+
+          
+             let alienDivs = document.getElementsByClassName("alien");
+             console.log("Alien Divs: " + alienDivs);
+             console.log("Alien Divs Length: " + alienDivs.length);
+             for(let i = 0; i < alienDivs.length; i++){
+                let div = alienDivs[i];
+                console.log("Alien Div at " + i +":" + div);
+                let alien_rect = div.getBoundingClientRect();
+                let crosshairRect = crosshairDiv.current.getBoundingClientRect()
+        
+                checkForCollision(crosshairRect,alien_rect,() => {
+                   setHits(hits+1);       
+                
+                    let originalImage = div.querySelector("img");
+                    runExplosionAnimation(originalImage,alienImages["pink"]);
+                }, () => { console.log("No Collision Occurred")});
+                
+             
+            }
 
             //  let alien1_rect = alien1.current.getBoundingClientRect();
             //  let crosshairRect = crosshairDiv.current.getBoundingClientRect()

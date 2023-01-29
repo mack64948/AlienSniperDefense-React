@@ -1,4 +1,5 @@
-import { useRef,useEffect,useState } from "react";
+import { useRef,useEffect,useState, forwardRef } from "react";
+import "./index.scss"
 
 export const SelfUpdatingAlien = ({imgSrc,config,gameScreenWidth,gameScreenHeight}) => {
 
@@ -9,13 +10,12 @@ export const SelfUpdatingAlien = ({imgSrc,config,gameScreenWidth,gameScreenHeigh
 
     useEffect(() => {
         let rect = element.current.getBoundingClientRect();
-        console.log("Rect: " + rect);
+      
 
     alienConfig.x += alienConfig.dx;
     alienConfig.y += alienConfig.dy;
 
-    console.log("alienConfig.x: " + alienConfig.x);
-    console.log("alienConfig.y: " + alienConfig.y);
+   
 
         if(alienConfig.x + rect.width >= gameScreenWidth || alienConfig.x <= 0){
             alienConfig.dx = -alienConfig.dx;
@@ -46,3 +46,13 @@ export const SelfUpdatingAlien = ({imgSrc,config,gameScreenWidth,gameScreenHeigh
     </div>);
 
 }
+
+export const SelfUpdatingAlienWithRef = forwardRef((props, ref) => (
+    <SelfUpdatingAlien ref={ref}
+        imgSrc={props.imgSrc} 
+        config={props.config} 
+        gameScreenWidth={props.gameScreenWidth} 
+        gameScreenHeight={props.gameScreenHeight}>
+      {props.children}
+    </SelfUpdatingAlien>
+  ));
