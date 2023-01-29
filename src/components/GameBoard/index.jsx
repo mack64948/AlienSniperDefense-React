@@ -156,23 +156,10 @@ function GameBoard({props}){
    
     return (<div ref={gameBoard} className="game-board" onMouseMove={updateCrosshairPosition}>
 
-        <h1 className="scoreboard">Total Hits: {hits}</h1>
+        <h1 className="scoreboard">{ hits === 3 ? "You Win" : `Total Hits: ${hits}`}</h1>
 
         {aliens}
-        {/* {alienConfigs.map((config) => {
-            console.log(config);
-            return <SelfUpdatingAlien
-                imgSrc={config.imgSrc}
-                config={{
-                    x: config.x,
-                    y: config.y,
-                    dx: config.dx,
-                    dy: config.dy
-                }}
-                gameScreenHeight={config.gameScreenHeight}
-                gameScreenWidth={config.gameScreenWidth}
-            ></SelfUpdatingAlien>
-        })} */}
+       
 
         <div onClick={() => {
             if(hasFired.current){
