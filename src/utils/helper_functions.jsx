@@ -1,7 +1,7 @@
 import { explosionTextures } from "../data";
 
 
-export function runAnimation(imgElement,baseImgPath,textures){
+export function runAnimation(imgElement,baseImgPath,textures, finishCallback){
    
     let textureIndex = 0;
 
@@ -13,6 +13,7 @@ export function runAnimation(imgElement,baseImgPath,textures){
         if(textureIndex === textures.length){
             imgElement.src = baseImgPath;
             clearInterval(animationIntervalID);
+            finishCallback();
           
         } else {
             textureIndex++;
@@ -20,8 +21,8 @@ export function runAnimation(imgElement,baseImgPath,textures){
     },100);
 }
 
-export function runExplosionAnimation(imgElement,basePathImg){
-    runAnimation(imgElement,basePathImg,explosionTextures);
+export function runExplosionAnimation(imgElement,basePathImg,finishCallback){
+    runAnimation(imgElement,basePathImg,explosionTextures,finishCallback);
 }
 
 export function checkForCollision(rect1,rect2,collisionCallback,noCollisionCallback){

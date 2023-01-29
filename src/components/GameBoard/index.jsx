@@ -1,12 +1,9 @@
 import {useState,useRef,useEffect} from "react"
 import "./index.scss"
-// import { Alien } from "../Alien";
-import { SelfUpdatingAlien } from "../SelfUpdatingAlien";
-import { SelfUpdatingAlienWithRef } from "../SelfUpdatingAlien";
-import { AlienEnemy } from "../../classes/AlienEnemy";
 
+import { SelfUpdatingAlien } from "../SelfUpdatingAlien";
 import { alienImages } from "../../data";
-import { checkForCollision, runExplosionAnimation } from "../../utils/helper_functions";
+import { checkForCollision, runAnimation, runExplosionAnimation } from "../../utils/helper_functions";
 
 /**
  * You can use useEffect to adjust position - make position a dependency
@@ -16,12 +13,10 @@ import { checkForCollision, runExplosionAnimation } from "../../utils/helper_fun
 function GameBoard({props}){
     const crosshairDiv = useRef();
     const gameBoard = useRef();
-    // let alien1 = useRef();
-    // const enemies = useRef();
-    // let alien1_config = useRef();
 
     const [position,setPosition] = useState({x: 0, y: 0})
     const [hits,setHits] = useState(0);
+    const [alienConfigs,setAlienConfigs] = useState([]);
 
 
 
@@ -42,50 +37,31 @@ function GameBoard({props}){
     /*
         Main Game Loop
     */
+
+        /*
     useEffect(() => {
         let boardRect = gameBoard.current.getBoundingClientRect()
-        let xMax = boardRect.width;
-        let yMax = boardRect.height;
+        let width = boardRect.width;
+        let height = boardRect.height;
      
-
-        // alien1 = new AlienEnemy(alienImages["pink"], 100,100,5,5,xMax,yMax);
-        // console.log(alien1);
-        // alien1_config = {
-        //     x: 100, y: 100,
-        //     dx: 10, dy: -10,
-        //     health: 10
-        // };
-
-        // let alien1_rect = alien1.current.getBoundingClientRect();
         let crosshairRect = crosshairDiv.current.getBoundingClientRect()
 
         
 
         let intervalID = setInterval(() => {
 
-            // alien1.updatePosition();
-            // alien1_config.x += alien1_config.dx;
-            // alien1_config.y += alien1_config.dy;
-
-            // if(alien1_config.x + alien1_rect.width >= xMax || alien1_config.x <= 0){
-            //     alien1_config.dx = -alien1_config.dx;
-            // }
-
-            // if(alien1_config.y + alien1_rect.height >= yMax || alien1_config.y <= 0){
-            //     alien1_config.dy = -alien1_config.dy;
-            // }
-
-        
-            // alien1.current.style.left = (alien1_config.x) + "px";
-            // alien1.current.style.top = (alien1_config.y) + "px";
-           
+         
         }, 100);
+       
 
         /**
          * Clear the interval for the game loop to prevent memory leaks
          */
+        /*
         return () => { clearInterval(intervalID) };
-    },[]);
+    },[]); */
+
+  
 
     const playSound = () => {
         let audio = new Audio('../../assets/audio/laser2.ogg');
@@ -111,54 +87,134 @@ function GameBoard({props}){
     }
 
 
-    let aliens = [
-        <SelfUpdatingAlien config={{x:200,y:100,dy:-5,dx:10}} gameScreenWidth={400} gameScreenHeight={400} imgSrc={alienImages["pink"]}></SelfUpdatingAlien>,
-        <SelfUpdatingAlien config={{x:100,y:100,dy:10,dx:10}} gameScreenWidth={400} gameScreenHeight={400} imgSrc={alienImages["pink"]}></SelfUpdatingAlien>,
-        <SelfUpdatingAlien config={{x:100,y:100,dy:10,dx:-6}} gameScreenWidth={400} gameScreenHeight={400} imgSrc={alienImages["pink"]}></SelfUpdatingAlien>,
+    useEffect(() => {
+        setAlienConfigs(createAlienConfigurations(5));
+    }, [])
 
-    ]
+    const createAlienConfigurations = (numberOfAliens) => {
+
+
+         console.log("Creating aliens...");
+        let configs = [];
+        let gameBoardRect = gameBoard.current.getBoundingClientRect();
+
+       for(let i = 0; i < numberOfAliens; i++){
+        console.log("Creating alien " + (i+1));
+        let randomX = Math.floor(Math.random()*gameBoardRect.width) + 50;
+        let randomY = Math.floor(Math.random()*gameBoardRect.width) + 50;
+
+        configs.push({
+            x:randomX,
+            y:randomY,
+            dy:10,
+            dx:-6, 
+            gameScreenWidth: gameBoardRect.width,
+            gameScreenHeight: gameBoardRect.height, 
+            imgSrc: alienImages[Math.floor(Math.random()*alienImages.length)]});
+        
+       }
+
+       return configs;
+    }
+
+   
+    // let aliens = [
+    //     <SelfUpdatingAlien imgSrc={alienImages["pink"]} config={{x: 100,y: 200,dx: 5,dy: -5}}
+    //                 gameScreenHeight={500}
+    //                 gameScreenWidth={600}
+    //             ></SelfUpdatingAlien>,
+    // ];
+
+    
+
+    
+
+    let aliens =[
+        <SelfUpdatingAlien imgSrc={alienImages["pink"]} 
+                    config={{x: 100,y: 200,dx: 5,dy: -5}}
+                            gameScreenHeight={500}
+                            gameScreenWidth={500}></SelfUpdatingAlien>,
+        <SelfUpdatingAlien imgSrc={alienImages["blue"]} 
+                        config={{x: 50,y: 150,dx: 10,dy: -15}}
+                            gameScreenHeight={500}
+                            gameScreenWidth={500}></SelfUpdatingAlien>,
+        <SelfUpdatingAlien imgSrc={alienImages["pink"]} 
+                            config={{x: 300,y: 100,dx: 8,dy: -25}}
+                                gameScreenHeight={500}
+                                gameScreenWidth={500}></SelfUpdatingAlien>,
+        ]
+    
+
+    
+
+    let hasFired = useRef(false);
+
+    useEffect(() => {
+        hasFired.current = false;
+    },[])
+    
    
     return (<div ref={gameBoard} className="game-board" onMouseMove={updateCrosshairPosition}>
 
-        <h1 className="scoreboard">{hits}</h1>
+        <h1 className="scoreboard">Total Hits: {hits}</h1>
 
         {aliens}
+        {/* {alienConfigs.map((config) => {
+            console.log(config);
+            return <SelfUpdatingAlien
+                imgSrc={config.imgSrc}
+                config={{
+                    x: config.x,
+                    y: config.y,
+                    dx: config.dx,
+                    dy: config.dy
+                }}
+                gameScreenHeight={config.gameScreenHeight}
+                gameScreenWidth={config.gameScreenWidth}
+            ></SelfUpdatingAlien>
+        })} */}
 
         <div onClick={() => {
-             playSound();
+            if(hasFired.current){
+                console.log("Can't fire now")
+                setTimeout(() => {
+                    hasFired.current = false
+                },500)
+                return;
+            }
+
+          
+            hasFired.current = true;
+            playSound();
 
           
              let alienDivs = document.getElementsByClassName("alien");
-             console.log("Alien Divs: " + alienDivs);
-             console.log("Alien Divs Length: " + alienDivs.length);
+            
              for(let i = 0; i < alienDivs.length; i++){
                 let div = alienDivs[i];
-                console.log("Alien Div at " + i +":" + div);
+             
                 let alien_rect = div.getBoundingClientRect();
                 let crosshairRect = crosshairDiv.current.getBoundingClientRect()
         
                 checkForCollision(crosshairRect,alien_rect,() => {
                    setHits(hits+1);       
-                
+                 
                     let originalImage = div.querySelector("img");
-                    runExplosionAnimation(originalImage,alienImages["pink"]);
-                }, () => { console.log("No Collision Occurred")});
                 
+                    runExplosionAnimation(originalImage,alienImages["pink"],() => {
+                        div.parentElement.removeChild(div);
+                        
+                    });
+                    
+                }, () => { 
+                  
+                    console.log("No Collision Occurred")});
+                    
              
             }
 
-            //  let alien1_rect = alien1.current.getBoundingClientRect();
-            //  let crosshairRect = crosshairDiv.current.getBoundingClientRect()
-     
-            //  checkForCollision(crosshairRect,alien1_rect,() => {
-            //     setHits(hits+1);       
-                    
-            //     let alienImg = alien1.current.querySelector("img");
-            //     console.log(alienImg);
-
-            //    runExplosionAnimation(alienImg,alienImages["pink"]);
-            //  });
-        
+           
+           
 
         }} id="the-crosshair" style={{position: "absolute"}} ref={crosshairDiv}></div>
 
